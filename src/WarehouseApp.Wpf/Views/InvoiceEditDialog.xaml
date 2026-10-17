@@ -1,0 +1,37 @@
+<Window x:Class="WarehouseApp.Wpf.Views.InvoiceEditDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Накладная" Height="520" Width="640"
+        WindowStartupLocation="CenterOwner">
+    <DockPanel Margin="12">
+        <TextBlock DockPanel.Dock="Top" Text="{Binding HeaderText}" Style="{StaticResource HeaderTextStyle}" TextWrapping="Wrap"/>
+
+        <Grid DockPanel.Dock="Top" Margin="0,0,0,10" IsEnabled="{Binding IsEditable}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0" ItemsSource="{Binding AvailableProducts}"
+                      SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                      DisplayMemberPath="Name"/>
+            <TextBox Grid.Column="1" Margin="8,0,0,0" Text="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Grid.Column="2" Margin="8,0,0,0" Content="Добавить в накладную" Command="{Binding AddItemCommand}"/>
+        </Grid>
+
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Удалить позицию" Command="{Binding RemoveItemCommand}"/>
+            <Button Content="Подтвердить накладную" Margin="8,0,0,0" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ConfirmCommand}"/>
+            <Button Content="Закрыть" Margin="8,0,0,0" Click="CloseButton_Click"/>
+        </StackPanel>
+
+        <DataGrid ItemsSource="{Binding Items}"
+                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*"/>
+                <DataGridTextColumn Header="Количество" Binding="{Binding Quantity}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>

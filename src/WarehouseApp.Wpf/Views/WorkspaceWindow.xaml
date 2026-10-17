@@ -1,0 +1,105 @@
+<Window x:Class="WarehouseApp.Wpf.Views.WorkspaceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:WarehouseApp.Wpf.Converters"
+        Title="{Binding Organization.Name}" Height="640" Width="1100"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <conv:PathToImageConverter x:Key="PathToImage"/>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Файл">
+                <MenuItem Header="Закрыть окно" Click="CloseMenuItem_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Склады">
+                <MenuItem Header="Новый склад" Command="{Binding AddWarehouseCommand}"/>
+                <MenuItem Header="Изменить склад" Command="{Binding EditWarehouseCommand}"/>
+                <MenuItem Header="Удалить склад" Command="{Binding DeleteWarehouseCommand}"/>
+                <Separator/>
+                <MenuItem Header="Импорт товаров" Command="{Binding ImportProductsCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Товары">
+                <MenuItem Header="Новый товар" Command="{Binding AddProductCommand}"/>
+                <MenuItem Header="Изменить товар" Command="{Binding EditProductCommand}"/>
+                <MenuItem Header="Удалить товар" Command="{Binding DeleteProductCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Накладные">
+                <MenuItem Header="Открыть список накладных" Command="{Binding OpenInvoicesCommand}"/>
+                <Separator/>
+                <MenuItem Header="Создать накладную" Command="{Binding CreateInvoiceCommand}"/>
+                <MenuItem Header="Изменить накладную" Command="{Binding EditInvoiceCommand}"/>
+                <MenuItem Header="Удалить накладную" Command="{Binding DeleteInvoiceCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Справочники">
+                <MenuItem Header="Организации (вернуться к списку)" Click="BackToOrganizations_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource StatusBarTextStyle}" Text="{Binding ContextStatus}"/>
+
+        <Grid Margin="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ListView Grid.Column="0" Margin="0,0,6,0"
+                      ItemsSource="{Binding Warehouses}"
+                      SelectedItem="{Binding SelectedWarehouse, Mode=TwoWay}"
+                      DisplayMemberPath="Name">
+                <ListView.ContextMenu>
+                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                        <MenuItem Header="Новый склад" Command="{Binding AddWarehouseCommand}"/>
+                        <MenuItem Header="Изменить склад" Command="{Binding EditWarehouseCommand}"/>
+                        <MenuItem Header="Удалить склад" Command="{Binding DeleteWarehouseCommand}"/>
+                        <Separator/>
+                        <MenuItem Header="Импорт товаров" Command="{Binding ImportProductsCommand}"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+
+            <DockPanel Grid.Column="1">
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+                    <Label Content="Поиск:" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalContentAlignment="Center"/>
+                </DockPanel>
+
+                <DataGrid ItemsSource="{Binding Products}"
+                          SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                          IsReadOnly="True" RowHeight="56">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Header="Новый товар" Command="{Binding AddProductCommand}"/>
+                            <MenuItem Header="Изменить товар" Command="{Binding EditProductCommand}"/>
+                            <MenuItem Header="Удалить товар" Command="{Binding DeleteProductCommand}"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.InputBindings>
+                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding EditProductCommand}"/>
+                    </DataGrid.InputBindings>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Фото" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding PhotoPath, Converter={StaticResource PathToImage}}"
+                                           Height="48" Stretch="Uniform" Margin="4"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="200"/>
+                        <DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="120"/>
+                        <DataGridTextColumn Header="Производитель" Binding="{Binding Manufacturer}" Width="130"/>
+                        <DataGridTextColumn Header="Поставщик" Binding="{Binding Supplier}" Width="140"/>
+                        <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:N2}}" Width="90"/>
+                        <DataGridTextColumn Header="Остаток" Binding="{Binding Stock}" Width="80"/>
+                        <DataGridTextColumn Header="Скидка %" Binding="{Binding DiscountPercent, StringFormat={}{0:0.##}}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>
